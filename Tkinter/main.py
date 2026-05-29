@@ -1,34 +1,29 @@
-import tkinter as tk
+from NENTkintLib import *
 
-def init_app():
-    global root
-    root = tk.Tk()
-    root.title("Simple App")
-    root.geometry("300x200")
+def setup():
+    root.configure(bg="#FFFFFF")
     
-def get_mouse_position():
-    global mouse_position
-    mouse_position = (root.winfo_pointerx() - root.winfo_rootx(), 
-                      root.winfo_pointery() - root.winfo_rooty())
+    drawText(root, "Hello, Tkinter!", color="blue", pos=[10, 0], size=16)
+
+    drawButton(root, string="Click Me", pos=[10, 50], command=lambda: drawText(root, "Button Clicked!", pos=[100, 50]))
+
+    drawText(root, "Move the mouse around to see its position.", pos=[10, 100])
+    drawText(root, "This is a simple Tkinter app.", pos=[10, 150])
+
+    global text2
+    text2 = drawText(root, "Mouse Position: (0,0)", pos=[10, 250])
 
 def update():
-    get_mouse_position()
-    text2.config(text=f"Mouse Position: ({mouse_position[0]}, {mouse_position[1]})")
+    mouse.update()
+    text2.config(text=f"Mouse Position: ({mouse.x}, {mouse.y})")
 
     root.after(10, update)
 
-def setup():
-    text1 = tk.Label(root, text="Hello, Tkinter!")
-    text1.pack()
-    button = tk.Button(root, text="Click Me", command=lambda: text1.config(text="Button Clicked!"))
-    button.pack()
+def main():
+    global root
+    root = init_app(400, 400, "My Tkinter App")
+    setup()
+    update()
+    root.mainloop()
 
-    global text2
-    text2 = tk.Label(root, text=f"Mouse Position: (0,0)")
-    text2.pack()
-
-
-init_app()
-setup()
-update()
-root.mainloop()
+main()
