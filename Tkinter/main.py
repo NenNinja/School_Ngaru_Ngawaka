@@ -1,4 +1,4 @@
-from NENTkintLib import *
+from PagesTest.NENTkintLib import *
 
 def setup():
     root.configure(bg="#FFFFFF")
@@ -26,4 +26,4 @@ def main():
     update()
     root.mainloop()
 
-main()
+main()  
