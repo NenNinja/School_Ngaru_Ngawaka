@@ -9,6 +9,8 @@ W, H = 400, 400
 # by passing tk.tk through the main class (making MAIN a child/inheriter of tk.tk) MAIN inherits all tk.tk 's functions, variables, EVERYTHING
 # this can be used to define "self" as a replacement for root (for miss ws) (for sister window)
 
+col = [0,0,0]
+
 class MAIN(tk.Tk):
     def __init__(self, W, H):
         super().__init__()
@@ -41,6 +43,10 @@ class MAIN(tk.Tk):
     def show_frame(self, page_name):
         frame = self.frames[page_name]
         frame.tkraise()
+
+    def update(self):
+        col
+        self.after(10, self.update)
 
 
 #drawButton(self, "Page Three", fill=tk.X, command=lambda: controller.show_frame("PageThree"), side=tk.LEFT) # only fill x not y and stick to left wall
@@ -75,4 +81,7 @@ class PageThree(tk.Frame):
         linkButton(self, "Previous Page", expand=True, fill=tk.BOTH, side=tk.LEFT, page="PageTwo", controller=controller, pady=5)
         linkButton(self, "Next Page", expand=True, fill=tk.BOTH, side=tk.RIGHT, page="PageOne", controller=controller, pady=5)
 
+
 MAIN(W, H).mainloop()
+
+
