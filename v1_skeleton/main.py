@@ -75,13 +75,25 @@ class HomePage(tk.Frame):
         self.rowconfigure(0, weight=3)
         self.rowconfigure((1, 2),weight=5)
         
+        if showGrids == True:
+            for ix in range(3):
+                for iy in range(3):
+                    frame(
+                        stage=self,
+                        column=ix, row=iy, 
+                        sticky="nsew", 
+                        bg="#ffffff",
+                        highLightColor="black",   # This sets the border color
+                        highLightWidth=1,        # This sets the border width in pixels
+                        )
+        
 
         # header frame
         headerFrame = frame(self, headerColor1, column=0, row=0, columnspan=3, sticky="nsew", columnNum=10, showGrid=showGrids)
         
         drawText(headerFrame, "PFP [placeholder]", bg="#ffffff", column=0, row=0, sticky="nsew", fsize=10)
         drawText(headerFrame, "Username", bg=headerColor1, column=1, row=0, sticky="nsew", fsize=30)
-        drawText(headerFrame, "Search:", bg=headerColor1, column=9, row=0, sticky="e", fsize=20, padx=10)
+        drawText(headerFrame, "Search:", bg=headerColor1, column=9, row=0, sticky="e", fsize=20, padx=10)   
         drawEntry(headerFrame, bg="#ffffff", column=10, padx=(0,30), sticky="w")
 
         # buttons frame
@@ -89,17 +101,19 @@ class HomePage(tk.Frame):
         linkButton(buttonFrame, bg=buttonColor1, text="Blog", page="PlaceHolderPage", controller=controller, column=0, row=0, sticky="news", fsize=30)
         linkButton(buttonFrame, bg=buttonColor1, text="Courses", page="PlaceHolderPage", controller=controller, column=0, row=1, sticky="news", fsize=30)
         linkButton(buttonFrame, bg=buttonColor1, text="Contact Us", page="PlaceHolderPage", controller=controller, column=0, row=10, sticky="news", fsize=30)
-        variable = ""
-        radioButton(buttonFrame, text="Dark Mode", variable=variable, value="dark", bg=backgroundColor1, fg="black", fstyle="Arial",  sticky="news", column=0, row=9)
-        radioButton(buttonFrame, text="Light Mode", variable=variable, value="light", bg=backgroundColor1, fg="black", fstyle="Arial", sticky="news", column=0, row=8)
+        
+        #variable = ""
+        #radioButton(buttonFrame, text="Dark Mode", variable=variable, value="dark", bg=backgroundColor1, fg="black", fstyle="Arial",  sticky="news", column=0, row=9)
+        #radioButton(buttonFrame, text="Light Mode", variable=variable, value="light", bg=backgroundColor1, fg="black", fstyle="Arial", sticky="news", column=0, row=8)
         
 
         # settings frame (placing)
-        settingsFrame = frame(self, bg=backgroundColor1, column=2, row=1, rowspan=2, sticky="nsew", columnNum=4, rowNum=10, showGrid=showGrids)
-        linkButton(settingsFrame, bg=buttonColor1, text="settings", page="PlaceHolderPage", controller=controller, column=4, row=10, sticky="news", fsize=30)
+        settingsFrame = frame(self, bg=backgroundColor1, column=2, row=1, rowspan=2, sticky="nsew", columnNum=6, rowNum=10, showGrid=showGrids)
+        #linkButton(settingsFrame, bg=buttonColor1, text="settings", page="PlaceHolderPage", controller=controller, column=4, row=10, sticky="news", fsize=30)
+        #
+        imageLinkButton(settingsFrame, fileDIR=assetDIR/"settingsCog.png", size=[50,50], controller=controller, page="PlaceHolderPage", sticky="news", column=4, row=9, columnspan=1, rowspan=1, bg=backgroundColor1  )
         
-        #NOTE: Need to replace the settings text with a gear icon, but for now this will do :3
-        
+        #DAN WAS HERE
 
 class PlaceHolderPage(tk.Frame):
     def __init__(self, parent, controller):

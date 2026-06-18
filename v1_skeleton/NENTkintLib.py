@@ -43,9 +43,7 @@ def frame(stage=None, bg="#ffffff", column=0, row=0, columnspan=1, rowspan=1, st
     
     if showGrid == True: # This grid is for debugging purposes, idea credit goes to Jaco (he inspired the idea for the grid)
         for ix in range(columnNum) if columnNum != 0 else range(1):
-            print(ix)
             for iy in range(rowNum) if rowNum != 0 else range(1):
-                print(iy)
                 frame(
                     stage=frame1,
                     column=ix, row=iy, 
@@ -140,12 +138,34 @@ def radioButton(stage=None, text="", variable=None, value=None, bg="white", fg="
             )
     return radio
 
-def image(stage=None, fileDIR=None, size=[100,100], sticky=""):
+def image(stage=None, fileDIR=None, size=[100,100], sticky="", column=0, row=0, columnspan=1, rowspan=1):
         try:
             resizedImage = Image.open(fileDIR).resize((size[0], size[1]), Image.Resampling.LANCZOS) # NOTE: .Resampling.LANCZOS allows resizing/changing pixel ratio
             tkImage = ImageTk.PhotoImage(resizedImage)
-            imageLabel = tk.Label(stage, image=tkImage).grid(sticky=sticky)
+            imageLabel = tk.Label(stage, image=tkImage).grid(sticky=sticky, column=column, row=row, columnspan=columnspan, rowspan=rowspan)
             imageLabel.image = tkImage
             return imageLabel
         except:
              print("err: please check file directory and stage")
+
+def imageCommandButton(stage=None, fileDIR=None, size=[100,100], sticky="", command=None, column=0, row=0, columnspan=1, rowspan=1):
+        try:
+            resizedImage = Image.open(fileDIR).resize((size[0], size[1]), Image.Resampling.LANCZOS) # NOTE: .Resampling.LANCZOS allows resizing/changing pixel ratio
+            tkImage = ImageTk.PhotoImage(resizedImage)
+            button = tk.Button(stage, image=tkImage, command=command, borderwidth=0)
+            button.image = tkImage
+            button.grid(sticky=sticky, column=column, row=row, columnspan=columnspan, rowspan=rowspan)
+            return button
+        except:
+            print("err: please check file directory and stage")
+
+def imageLinkButton(stage=None, fileDIR=None, size=[100,100], sticky="", column=0, row=0, columnspan=1, rowspan=1, controller=None, page=None, bg="white"):
+        try:
+            resizedImage = Image.open(fileDIR).resize((size[0], size[1]), Image.Resampling.LANCZOS) # NOTE: .Resampling.LANCZOS allows resizing/changing pixel ratio
+            tkImage = ImageTk.PhotoImage(resizedImage)
+            button = tk.Button(stage, image=tkImage, command=lambda: controller.show_frame(page), borderwidth=0, bg=bg, activebackground=bg, relief="flat", bd=0, highlightthickness=0)
+            button.image = tkImage
+            button.grid(sticky=sticky, column=column, row=row, columnspan=columnspan, rowspan=rowspan)
+            return button
+        except:
+            print("err: please check file directory and stage")
