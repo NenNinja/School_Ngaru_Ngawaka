@@ -24,8 +24,25 @@ backgroundColor1 = "#bdbdbd"
 headerColor1 = "#a0a0a0"
 buttonColor1 = "#ffffff"
 
-showGrids = False
+showGrids = True
 
+def toggleGrid():
+    global showGrids
+    if showGrids == True:
+        showGrids = False
+    else:
+        showGrids = True
+    refresh(main)
+
+
+def refresh(main=None):
+    for frame in main.frames.values():
+        frame.destroy()
+    main.frames = {}
+    main.buildAllFrames(main.stage)
+    
+    
+    print(main.frames)
 
 class MAIN(tk.Tk):
     def __init__(self, W, H):
@@ -33,29 +50,32 @@ class MAIN(tk.Tk):
         self.title("CodeLog")
         self.geometry(f"{W}x{H}")
         self.attributes('-zoomed', True)
+        self.configure(bg="#ff0000")
 
-        stage = tk.Frame(self)
+        self.stage = tk.Frame(self)
 
         # NOTE: sides makes it stick to top
         # NOTE: fill makes it fill x or y (both means both)
         # NOTE: expand makes it fill screen (even if user resizes)
-        stage.pack(side="top", fill="both", expand=True)
+        self.stage.pack(side="top", fill="both", expand=True)
 
         # NOTE: weight=1 makes it fill the screen size
-        stage.grid_rowconfigure(0, weight=1)
-        stage.grid_columnconfigure(0, weight=1)
+        self.stage.grid_rowconfigure(0, weight=1)
+        self.stage.grid_columnconfigure(0, weight=1)
 
         # dictionary for easy access later {"dictName" : value}
         self.frames = {}
+        self.buildAllFrames(self.stage)
 
-
-        for PageClass in (PlaceHolderPage, HomePage):
+    def buildAllFrames(self, stage):
+        for PageClass in (PlaceHolderPage, SettingsPage, HomePage):
+            print(PageClass.__name__)
             # for each page create a new class and new frame
-            page_name = PageClass.__name__ # NOTE: __name__ returns (PageTwo, PageOne) the name of the class
+            page_name = PageClass.__name__ # NOTE: __name__ returns the name of the class {>>>("name")<<< : "value"}
             frame = PageClass(parent=stage, controller=self)
             self.frames[page_name] = frame
             
-            frame.grid(row=0, column=0, sticky="nsew")
+            frame.grid(row=0, column=0, sticky="nsew") 
 
     # switch to page "page_name"
     def show_frame(self, page_name):
@@ -65,8 +85,25 @@ class MAIN(tk.Tk):
 
 #NOTE: drawButton(self, "Page Three", fill=tk.X, command=lambda: controller.show_frame("PageThree"), side=tk.LEFT) # only fill x not y and stick to left wall
 
+
+def header(stage, controller):
+    headerFrame = frame(stage, headerColor1, column=0, row=0, columnspan=3, sticky="nsew", columnNum=10, showGrid=showGrids)
+    headerFrame.grid_propagate(False)
+
+    linkButton(headerFrame, "home \n[placeholder]", controller=controller, page="HomePage", column=4, row=0, sticky="ew")
+    drawText(headerFrame, "PFP \n[placeholder]", bg="#ffffff", column=0, row=0, sticky="nsew", fsize=20)
+    drawText(headerFrame, "Username", bg=headerColor1, column=1, row=0, sticky="nsew", fsize=30)
+    drawText(headerFrame, "Search:", bg=headerColor1, column=7, row=0, sticky="e", fsize=20, padx=10)   
+    drawEntry(headerFrame, bg="#ffffff", column=8, padx=(0,30), sticky="w")
+    imageLinkButton(headerFrame, fileDIR=assetDIR/"settingsCog.png", size=[50,50], controller=controller, page="SettingsPage", sticky="news", column=9, row=0, columnspan=1, rowspan=1, bg=headerColor1)
+    
+
 class HomePage(tk.Frame):
     def __init__(self, parent, controller):
+        self.build(parent, controller)
+
+
+    def build(self, parent, controller):
         super().__init__(parent) # NOTE: parent = the main frame (stage) that is being passed through the MAIN class
         self.configure(bg=backgroundColor1)
         self.controller = controller # NOTE: controller = parent (in this case MAIN) used to access children of MAIN
@@ -89,15 +126,11 @@ class HomePage(tk.Frame):
         
 
         # header frame
-        headerFrame = frame(self, headerColor1, column=0, row=0, columnspan=3, sticky="nsew", columnNum=10, showGrid=showGrids)
-        
-        drawText(headerFrame, "PFP [placeholder]", bg="#ffffff", column=0, row=0, sticky="nsew", fsize=10)
-        drawText(headerFrame, "Username", bg=headerColor1, column=1, row=0, sticky="nsew", fsize=30)
-        drawText(headerFrame, "Search:", bg=headerColor1, column=9, row=0, sticky="e", fsize=20, padx=10)   
-        drawEntry(headerFrame, bg="#ffffff", column=10, padx=(0,30), sticky="w")
+        header(self, controller=controller)
 
         # buttons frame
         buttonFrame = frame(self, bg=backgroundColor1, column=1, row=1, rowspan=2, sticky="nsew", rowNum=10, showGrid=showGrids)
+        buttonFrame.grid_propagate(False)
         linkButton(buttonFrame, bg=buttonColor1, text="Blog", page="PlaceHolderPage", controller=controller, column=0, row=0, sticky="news", fsize=30)
         linkButton(buttonFrame, bg=buttonColor1, text="Courses", page="PlaceHolderPage", controller=controller, column=0, row=1, sticky="news", fsize=30)
         linkButton(buttonFrame, bg=buttonColor1, text="Contact Us", page="PlaceHolderPage", controller=controller, column=0, row=10, sticky="news", fsize=30)
@@ -109,14 +142,16 @@ class HomePage(tk.Frame):
 
         # settings frame (placing)
         settingsFrame = frame(self, bg=backgroundColor1, column=2, row=1, rowspan=2, sticky="nsew", columnNum=6, rowNum=10, showGrid=showGrids)
-        #linkButton(settingsFrame, bg=buttonColor1, text="settings", page="PlaceHolderPage", controller=controller, column=4, row=10, sticky="news", fsize=30)
-        #
-        imageLinkButton(settingsFrame, fileDIR=assetDIR/"settingsCog.png", size=[50,50], controller=controller, page="PlaceHolderPage", sticky="news", column=4, row=9, columnspan=1, rowspan=1, bg=backgroundColor1  )
+        settingsFrame.grid_propagate(False)
+        
         
         #DAN WAS HERE
 
 class PlaceHolderPage(tk.Frame):
     def __init__(self, parent, controller):
+        self.build(parent, controller)
+
+    def build(self, parent, controller):
         super().__init__(parent)
         self.configure(bg=backgroundColor1) 
         self.columnconfigure((0,1),weight=1)
@@ -128,7 +163,39 @@ class PlaceHolderPage(tk.Frame):
         linkButton(self, "HomePage", page="HomePage", controller=controller, column=0, row=1, columnspan=2, sticky="nsew")
     
 
+class SettingsPage(tk.Frame):
+    def __init__(self, parent, controller):
+        self.build(parent, controller)
 
-MAIN(W, H).mainloop()
+    def build(self, parent, controller):  
+        super().__init__(parent)
+        self.configure(bg=backgroundColor1)
+        self.controller = controller
+        self.columnconfigure((0, 2),weight=1)
+        self.columnconfigure(1,weight=1)
+        self.rowconfigure(0, weight=3)
+        self.rowconfigure((1, 2),weight=5)
+
+        if showGrids == True:
+            for ix in range(3):
+                for iy in range(3):
+                    frame(
+                        stage=self,
+                        column=ix, row=iy, 
+                        sticky="nsew", 
+                        bg="#ffffff",
+                        highLightColor="black",   # This sets the border color
+                        highLightWidth=1,        # This sets the border width in pixels
+                        )
+        
+        header(self, controller=controller)
+
+        settingsFrame = frame(self, bg=backgroundColor1, column=0, row=1, rowspan=2, columnspan=3, sticky="nsew", columnNum=5, rowNum=10, showGrid=showGrids)
+        settingsFrame.grid_propagate(False)
+        #functionButton(settingsFrame, text="ShowGrid", bg=buttonColor1, command=lambda: toggleGrid(), sticky="news", column=0, row=0, columnspan=2)
+        tk.Button(settingsFrame, text="ShowGrid", bg=buttonColor1, command=lambda: toggleGrid()).grid(sticky="news", column=0, row=0, columnspan=2)
+
+main = MAIN(W, H)
+main.mainloop()
 
 

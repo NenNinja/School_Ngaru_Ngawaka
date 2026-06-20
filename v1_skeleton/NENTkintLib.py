@@ -73,7 +73,7 @@ def drawText(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=
             )
     return label # return label so you can use it to change the text later (eg. label.config(text="new text")) (for dynamic text like score, timer, etc.)
 
-def functionButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=14, extra="normal", padx=0, pady=0, sticky="", command=None):
+def functionButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=14, extra="normal", padx=0, pady=0, sticky="", command=None, column=0, row=0, columnspan=1, rowspan=1):
     button = tk.Button(
         stage, 
         text=text, 
@@ -83,7 +83,9 @@ def functionButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", 
         padx=padx, pady=pady, 
         command=lambda: command
         ).grid(
-            sticky=sticky
+            sticky=sticky, 
+            column=column, row=row, 
+            columnspan=columnspan, rowspan=rowspan
             )
     return button
 
