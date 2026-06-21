@@ -24,32 +24,19 @@ backgroundColor1 = "#bdbdbd"
 headerColor1 = "#a0a0a0"
 buttonColor1 = "#ffffff"
 
-showGrids = True
-
-def toggleGrid():
-    global showGrids
-    if showGrids == True:
-        showGrids = False
-    else:
-        showGrids = True
-    refresh(main)
+showGrids = False
 
 
-def refresh(main=None):
-    for frame in main.frames.values():
-        frame.destroy()
-    main.frames = {}
-    main.buildAllFrames(main.stage)
-    
-    
-    print(main.frames)
+
+
 
 class MAIN(tk.Tk):
     def __init__(self, W, H):
         super().__init__()
+        self.currentPage = None
         self.title("CodeLog")
         self.geometry(f"{W}x{H}")
-        self.attributes('-zoomed', True)
+        self.state('zoomed') 
         self.configure(bg="#ff0000")
 
         self.stage = tk.Frame(self)
@@ -81,7 +68,25 @@ class MAIN(tk.Tk):
     def show_frame(self, page_name):
         frame = self.frames[page_name]
         frame.tkraise()
+        self.currentPage = page_name
         #image(stage=self, fileDIR=assetDIR/"image.png", size=[300,200])
+
+    
+    def refresh(self):
+        for frame in self.frames.values():
+            frame.destroy()
+        self.frames = {}
+        self.buildAllFrames(self.stage)
+        self.show_frame(self.currentPage)
+        
+        
+        print(self.frames)
+    
+    def toggleGrid(self):
+        print("toggled grid")
+        global showGrids
+        showGrids = not showGrids
+        self.refresh()
 
 #NOTE: drawButton(self, "Page Three", fill=tk.X, command=lambda: controller.show_frame("PageThree"), side=tk.LEFT) # only fill x not y and stick to left wall
 
@@ -193,7 +198,16 @@ class SettingsPage(tk.Frame):
         settingsFrame = frame(self, bg=backgroundColor1, column=0, row=1, rowspan=2, columnspan=3, sticky="nsew", columnNum=5, rowNum=10, showGrid=showGrids)
         settingsFrame.grid_propagate(False)
         #functionButton(settingsFrame, text="ShowGrid", bg=buttonColor1, command=lambda: toggleGrid(), sticky="news", column=0, row=0, columnspan=2)
-        tk.Button(settingsFrame, text="ShowGrid", bg=buttonColor1, command=lambda: toggleGrid()).grid(sticky="news", column=0, row=0, columnspan=2)
+        tk.Button(settingsFrame, text="ShowGrid", bg=buttonColor1, command=lambda: controller.toggleGrid()).grid(sticky="news", column=0, row=0, columnspan=2)
+        """""
+        checkbox = tk.Checkbutton(
+            self, 
+            text="Show Grids", 
+            variable=showGrids,
+            command=print("tst")
+        )
+        checkbox.grid(sticky="news", column=0, row=0, columnspan=2)
+        """""   
 
 main = MAIN(W, H)
 main.mainloop()
