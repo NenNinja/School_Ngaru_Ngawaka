@@ -2,6 +2,8 @@ from logging import root
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
+from tkinter import colorchooser as colPicker
+
 # mouse class (currently only tracks position) NOTE: from old program for now ignore
 class Mouse:
     def __init__(self):
@@ -40,6 +42,7 @@ def frame(stage=None, bg="#ffffff", column=0, row=0, columnspan=1, rowspan=1, st
             frame1.rowconfigure(i, weight=1)
     else:
         frame1.rowconfigure(0, weight=1)
+    frame1.grid_propagate(False)
     
     if showGrid == True: # This grid is for debugging purposes, idea credit goes to Jaco (he inspired the idea for the grid)
         for ix in range(columnNum) if columnNum != 0 else range(1):
@@ -171,3 +174,17 @@ def imageLinkButton(stage=None, fileDIR=None, size=[100,100], sticky="", column=
             return button
         except:
             print("err: please check file directory and stage")
+
+def pick_color():
+    col = colPicker.askcolor(title="Choose a color") # from tkinter import colorchooser as colPicker
+    if col[1]:
+        return col[1] # returns hex code
+    
+def checkBox(stage=None, text="", variable=None, command=None, column=0, row=0, columnspan=1, rowspan=1, sticky=""):
+    chkbx = tk.Checkbutton(
+            stage, 
+            text="Show Grids", 
+            variable=variable,
+            command=lambda: command
+        ).grid(sticky=sticky, column=column, row=row, columnspan=columnspan, rowspan=rowspan)
+    return chkbx

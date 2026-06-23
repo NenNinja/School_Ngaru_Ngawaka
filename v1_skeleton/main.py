@@ -24,7 +24,7 @@ backgroundColor1 = "#bdbdbd"
 headerColor1 = "#a0a0a0"
 buttonColor1 = "#ffffff"
 
-showGrids = False
+
 
 
 
@@ -38,6 +38,9 @@ class MAIN(tk.Tk):
         self.geometry(f"{W}x{H}")
         self.state('zoomed') 
         self.configure(bg="#ff0000")
+
+        self.showGrids = False
+        self.showGridsTk = tk.BooleanVar(value=self.showGrids)
 
         self.stage = tk.Frame(self)
 
@@ -84,16 +87,14 @@ class MAIN(tk.Tk):
     
     def toggleGrid(self):
         print("toggled grid")
-        global showGrids
-        showGrids = not showGrids
+        self.showGrids = self.showGridsTk.get()
         self.refresh()
 
 #NOTE: drawButton(self, "Page Three", fill=tk.X, command=lambda: controller.show_frame("PageThree"), side=tk.LEFT) # only fill x not y and stick to left wall
 
 
 def header(stage, controller):
-    headerFrame = frame(stage, headerColor1, column=0, row=0, columnspan=3, sticky="nsew", columnNum=10, showGrid=showGrids)
-    headerFrame.grid_propagate(False)
+    headerFrame = frame(stage, headerColor1, column=0, row=0, columnspan=3, sticky="nsew", columnNum=10, showGrid=controller.showGrids)
 
     linkButton(headerFrame, "home \n[placeholder]", controller=controller, page="HomePage", column=4, row=0, sticky="ew")
     drawText(headerFrame, "PFP \n[placeholder]", bg="#ffffff", column=0, row=0, sticky="nsew", fsize=20)
@@ -117,7 +118,7 @@ class HomePage(tk.Frame):
         self.rowconfigure(0, weight=3)
         self.rowconfigure((1, 2),weight=5)
         
-        if showGrids == True:
+        if controller.showGrids == True:
             for ix in range(3):
                 for iy in range(3):
                     frame(
@@ -134,8 +135,7 @@ class HomePage(tk.Frame):
         header(self, controller=controller)
 
         # buttons frame
-        buttonFrame = frame(self, bg=backgroundColor1, column=1, row=1, rowspan=2, sticky="nsew", rowNum=10, showGrid=showGrids)
-        buttonFrame.grid_propagate(False)
+        buttonFrame = frame(self, bg=backgroundColor1, column=1, row=1, rowspan=2, sticky="nsew", rowNum=10, showGrid=controller.showGrids)
         linkButton(buttonFrame, bg=buttonColor1, text="Blog", page="PlaceHolderPage", controller=controller, column=0, row=0, sticky="news", fsize=30)
         linkButton(buttonFrame, bg=buttonColor1, text="Courses", page="PlaceHolderPage", controller=controller, column=0, row=1, sticky="news", fsize=30)
         linkButton(buttonFrame, bg=buttonColor1, text="Contact Us", page="PlaceHolderPage", controller=controller, column=0, row=10, sticky="news", fsize=30)
@@ -146,8 +146,8 @@ class HomePage(tk.Frame):
         
 
         # settings frame (placing)
-        settingsFrame = frame(self, bg=backgroundColor1, column=2, row=1, rowspan=2, sticky="nsew", columnNum=6, rowNum=10, showGrid=showGrids)
-        settingsFrame.grid_propagate(False)
+        settingsFrame = frame(self, bg=backgroundColor1, column=2, row=1, rowspan=2, sticky="nsew", columnNum=6, rowNum=10, showGrid=controller.showGrids)
+        
         
         
         #DAN WAS HERE
@@ -181,7 +181,7 @@ class SettingsPage(tk.Frame):
         self.rowconfigure(0, weight=3)
         self.rowconfigure((1, 2),weight=5)
 
-        if showGrids == True:
+        if controller.showGrids == True:
             for ix in range(3):
                 for iy in range(3):
                     frame(
@@ -195,21 +195,9 @@ class SettingsPage(tk.Frame):
         
         header(self, controller=controller)
 
-        settingsFrame = frame(self, bg=backgroundColor1, column=0, row=1, rowspan=2, columnspan=3, sticky="nsew", columnNum=5, rowNum=10, showGrid=showGrids)
-        settingsFrame.grid_propagate(False)
-        #functionButton(settingsFrame, text="ShowGrid", bg=buttonColor1, command=lambda: toggleGrid(), sticky="news", column=0, row=0, columnspan=2)
-        tk.Button(settingsFrame, text="ShowGrid", bg=buttonColor1, command=lambda: controller.toggleGrid()).grid(sticky="news", column=0, row=0, columnspan=2)
-        """""
-        checkbox = tk.Checkbutton(
-            self, 
-            text="Show Grids", 
-            variable=showGrids,
-            command=print("tst")
-        )
-        checkbox.grid(sticky="news", column=0, row=0, columnspan=2)
-        """""   
+        settingsFrame = frame(self, bg=backgroundColor1, column=0, row=1, rowspan=2, columnspan=3, sticky="nsew", columnNum=5, rowNum=10, showGrid=controller.showGrids)
+        checkBox(settingsFrame, )
+        
 
 main = MAIN(W, H)
 main.mainloop()
-
-
