@@ -20,6 +20,6 @@ chk = ttk.Checkbutton(
     variable=is_checked, 
     command=on_toggle
 )
-chk.pack(pady=40)
+chk.grid(pady=40)
 
 root.mainloop()

@@ -19,25 +19,27 @@ mouse = Mouse()
 # NOTE: Lazy man code
 # commonly used functions and variables are stored here to avoid making main.py messy
 
-def frame(stage=None, bg="#ffffff", column=0, row=0, columnspan=1, rowspan=1, sticky="", columnNum=0, rowNum=0, showGrid=False, highLightColor="black", highLightWidth=0):
+def frame(stage=None, bg="#ffffff", column=0, row=0, columnspan=1, rowspan=1, sticky="", columnNum=0, rowNum=0, showGrid=False, highLightColor="black", highLightWidth=0, padx=0, pady=0):
     frame1 = tk.Frame(
-        stage, 
+        stage,
         bg=bg, 
         highlightbackground=highLightColor, 
-        highlightthickness=highLightWidth 
+        highlightthickness=highLightWidth,
         )
     frame1.grid(
         column=column, 
         row=row, 
         columnspan=columnspan, 
         rowspan=rowspan, 
-        sticky=sticky
+        sticky=sticky,
+        padx=padx,
+        pady=pady
         )
     if columnNum != 0: #NOTE: use if here bc if you set columnNum to 0 it will skip the for i in range() since range(0) = just skips
         for i in range(columnNum): 
-            frame1.columnconfigure(i, weight=1)
+            frame1.columnconfigure(i, weight=1, uniform="group1")
     else:
-        frame1.columnconfigure(0, weight=1)
+        frame1.columnconfigure(0, weight=1, uniform="group1")
     if rowNum != 0:
         for i in range(rowNum):
             frame1.rowconfigure(i, weight=1)
@@ -100,14 +102,14 @@ def linkButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsiz
         bg=bg, 
         fg=fg, 
         font=(fstyle, fsize, extra), 
-        padx=padx, pady=pady, 
         command=lambda: controller.show_frame(page)
         ).grid(
             sticky=sticky, 
             column=column, 
             row=row, 
             columnspan=columnspan, 
-            rowspan=rowspan
+            rowspan=rowspan,
+            padx=padx, pady=pady, 
             )
     return button
 

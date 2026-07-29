@@ -1,4 +1,3 @@
-from logging import root
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
@@ -19,19 +18,23 @@ mouse = Mouse()
 # NOTE: Lazy man code
 # commonly used functions and variables are stored here to avoid making main.py messy
 
-def frame(stage=None, bg="#ffffff", column=0, row=0, columnspan=1, rowspan=1, sticky="", columnNum=0, rowNum=0, showGrid=False, highLightColor="black", highLightWidth=0):
+def frame(stage=None, bg="#ffffff", column=0, row=0, columnspan=1, rowspan=1, sticky="", columnNum=0, rowNum=0, showGrid=False, highLightColor="black", highLightWidth=0, padx=0, pady=0, bd=0, relief="ridge"):
     frame1 = tk.Frame(
         stage, 
         bg=bg, 
         highlightbackground=highLightColor, 
-        highlightthickness=highLightWidth 
+        highlightthickness=highLightWidth,
+        borderwidth=bd,
+        relief=relief
         )
     frame1.grid(
         column=column, 
         row=row, 
         columnspan=columnspan, 
         rowspan=rowspan, 
-        sticky=sticky
+        sticky=sticky,
+        padx=padx,
+        pady=pady
         )
     if columnNum != 0: #NOTE: use if here bc if you set columnNum to 0 it will skip the for i in range() since range(0) = just skips
         for i in range(columnNum): 
@@ -69,11 +72,11 @@ def drawText(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=
         bg=bg, 
         fg=fg, 
         font=(fstyle, fsize, extra), 
-        padx=padx, pady=pady
         ).grid(
             sticky=sticky, 
             column=column, row=row, 
-            columnspan=columnspan, rowspan=rowspan
+            columnspan=columnspan, rowspan=rowspan,
+            padx=padx, pady=pady
             )
     return label # return label so you can use it to change the text later (eg. label.config(text="new text")) (for dynamic text like score, timer, etc.)
 
@@ -84,12 +87,12 @@ def functionButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", 
         bg=bg, 
         fg=fg, 
         font=(fstyle, fsize, extra), 
-        padx=padx, pady=pady, 
-        command=command
+        command=lambda: command
         ).grid(
             sticky=sticky, 
             column=column, row=row, 
-            columnspan=columnspan, rowspan=rowspan
+            columnspan=columnspan, rowspan=rowspan,
+            padx=padx, pady=pady, 
             )
     return button
 
@@ -145,14 +148,13 @@ def radioButton(stage=None, text="", variable=None, value=None, bg="white", fg="
     return radio
 
 def image(stage=None, fileDIR=None, size=[100,100], sticky="", column=0, row=0, columnspan=1, rowspan=1):
-        try:
-            resizedImage = Image.open(fileDIR).resize((size[0], size[1]), Image.Resampling.LANCZOS) # NOTE: .Resampling.LANCZOS allows resizing/changing pixel ratio
-            tkImage = ImageTk.PhotoImage(resizedImage)
-            imageLabel = tk.Label(stage, image=tkImage).grid(sticky=sticky, column=column, row=row, columnspan=columnspan, rowspan=rowspan)
-            imageLabel.image = tkImage
-            return imageLabel
-        except:
-             print("err: please check file directory and stage")
+        
+        resizedImage = Image.open(fileDIR).resize((size[0], size[1]), Image.Resampling.LANCZOS) # NOTE: .Resampling.LANCZOS allows resizing/changing pixel ratio
+        tkImage = ImageTk.PhotoImage(resizedImage)
+        imageLabel = tk.Label(stage, image=tkImage, bg=stage["bg"])
+        imageLabel.grid(sticky=sticky, column=column, row=row, columnspan=columnspan, rowspan=rowspan)
+        imageLabel.image = tkImage
+        return imageLabel
 
 def imageCommandButton(stage=None, fileDIR=None, size=[100,100], sticky="", command=None, column=0, row=0, columnspan=1, rowspan=1):
         try:
@@ -176,7 +178,7 @@ def imageLinkButton(stage=None, fileDIR=None, size=[100,100], sticky="", column=
         except:
             print("err: please check file directory and stage")
 
-def pickColor():
+def pick_color():
     col = colPicker.askcolor(title="Choose a color") # from tkinter import colorchooser as colPicker
     if col[1]:
         return col[1] # returns hex code
@@ -184,8 +186,9 @@ def pickColor():
 def checkBox(stage=None, text="", variable=None, command=None, column=0, row=0, columnspan=1, rowspan=1, sticky=""):
     chkbx = tk.Checkbutton(
             stage, 
-            text="Show Grids", 
+            text=text, 
             variable=variable,
             command=command
-        ).grid(sticky=sticky, column=column, row=row, columnspan=columnspan, rowspan=rowspan)
+        )
+    chkbx.grid(sticky=sticky, column=column, row=row, columnspan=columnspan, rowspan=rowspan)
     return chkbx

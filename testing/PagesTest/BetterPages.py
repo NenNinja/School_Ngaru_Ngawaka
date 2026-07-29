@@ -1,4 +1,4 @@
-from NENTkintLib import *
+from testNgaruNgawaka.NENTkintLib import *
 
 W, H = 400, 400
 

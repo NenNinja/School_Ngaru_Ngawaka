@@ -1,0 +1,3 @@
+backgroundColor1=#bdbdbd
+headerColor1=#a0a0a0
+buttonColor1=#ffffff
