@@ -42,9 +42,9 @@ def frame(stage=None, bg="#ffffff", column=0, row=0, columnspan=1, rowspan=1, st
         frame1.columnconfigure(0, weight=1, uniform="group1")
     if rowNum != 0:
         for i in range(rowNum):
-            frame1.rowconfigure(i, weight=1)
+            frame1.rowconfigure(i, weight=1, uniform="group1")
     else:
-        frame1.rowconfigure(0, weight=1)
+        frame1.rowconfigure(0, weight=1, uniform="group1")
     frame1.grid_propagate(False)
     
     if showGrid == True: # This grid is for debugging purposes, idea credit goes to Jaco (he inspired the idea for the grid)
@@ -72,7 +72,8 @@ def drawText(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=
         fg=fg, 
         font=(fstyle, fsize, extra), 
         padx=padx, pady=pady
-        ).grid(
+        )
+    label.grid(
             sticky=sticky, 
             column=column, row=row, 
             columnspan=columnspan, rowspan=rowspan
@@ -85,25 +86,32 @@ def functionButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", 
         text=text, 
         bg=bg, 
         fg=fg, 
-        font=(fstyle, fsize, extra), 
-        padx=padx, pady=pady, 
+        font=(fstyle, fsize, extra),  
         command=command
-        ).grid(
+        )
+    button.grid(
             sticky=sticky, 
             column=column, row=row, 
+            padx=padx, pady=pady,
             columnspan=columnspan, rowspan=rowspan
             )
     return button
 
-def linkButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=14, extra="normal", padx=0, pady=0, sticky="", controller=None, page=None, column=0, row=0, columnspan=1, rowspan=1):
+def linkButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=14, extra="normal", padx=0, pady=0, sticky="", controller=None, page=None, column=0, row=0, columnspan=1, rowspan=1, activebackground=None, borderwidth=1, relief="raised", bd=1, highlightthickness=0):
     button = tk.Button(
         stage, 
         text=text, 
         bg=bg, 
         fg=fg, 
         font=(fstyle, fsize, extra), 
-        command=lambda: controller.show_frame(page)
-        ).grid(
+        command=lambda: controller.show_frame(page),
+        activebackground=activebackground,
+        borderwidth=borderwidth,
+        relief=relief,
+        bd=bd,
+        highlightthickness=highlightthickness
+        )
+    button.grid(
             sticky=sticky, 
             column=column, 
             row=row, 
@@ -119,7 +127,8 @@ def drawEntry(stage=None, bg="white", fg="black", fstyle="Arial", fsize=14, extr
         bg=bg, 
         fg=fg, 
         font=(fstyle, fsize, extra)
-        ).grid(
+        )
+    entry.grid(
             sticky=sticky, 
             column=column, 
             row=row, 
@@ -136,7 +145,8 @@ def radioButton(stage=None, text="", variable=None, value=None, bg="white", fg="
         text=text, 
         variable=variable, 
         value=value
-        ).grid(
+        )
+    radio.grid(
             sticky=sticky, 
             column=column, 
             row=row, 

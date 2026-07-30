@@ -21,8 +21,11 @@ def on_closing():
     with open(scriptDIR / "config.txt", "r") as file: # read the config file and update it with the current colors
         lines = file.read().splitlines()
         lines[0] = lines[0].split("=")[0] + "=" + main.backgroundColor1
-        lines[1] = lines[1].split("=")[0] + "=" + main.headerColor1
-        lines[2] = lines[2].split("=")[0] + "=" + main.buttonColor1
+        lines[1] = lines[1].split("=")[0] + "=" + main.backgroundColor2
+        lines[2] = lines[2].split("=")[0] + "=" + main.headerColor1
+        lines[3] = lines[3].split("=")[0] + "=" + main.buttonColor1
+        lines[4] = lines[4].split("=")[0] + "=" + main.textColor1
+        
 
     with open(scriptDIR / "config.txt", "w") as file:
         for line in lines:
@@ -41,11 +44,14 @@ class MAIN(tk.Tk):
             content = []
             for i in file.read().splitlines():
                 content.append(i.split("=")[1])
-            print(content)
+            #print(content)
 
         self.backgroundColor1 = content[0]
-        self.headerColor1 = content[1]
-        self.buttonColor1 = content[2]
+        self.backgroundColor2 = content[1]
+        self.headerColor1 = content[2]
+        self.buttonColor1 = content[3]
+        self.textColor1 = content[4]
+        self.loggedInText = None
         self.loggedIn = False
         self.username = None
         get_connection(dbDIR/"userInformation.db")  # Establish database connection
@@ -54,16 +60,15 @@ class MAIN(tk.Tk):
         self.currentPage = None
         self.title("CodeLog")
         self.geometry(f"{W}x{H}")
-        self.state('zoomed') 
-        self.configure(bg="#ff0000")
+        self.state('zoomed')
 
         self.showGrids = False
         self.showGridsTk = tk.BooleanVar(value=self.showGrids)
 
         self.stage = tk.Frame(self)
         self.stage.pack(side="top", fill="both", expand=True)
-        self.stage.grid_rowconfigure(0, weight=1)
-        self.stage.grid_columnconfigure(0, weight=1)
+        self.stage.grid_rowconfigure(0, weight=1, uniform="group1")
+        self.stage.grid_columnconfigure(0, weight=1, uniform="group1")
 
         # dictionary for easy access later {"dictName" : value}
         self.frames = {}
@@ -71,14 +76,14 @@ class MAIN(tk.Tk):
 
 
     def buildAllFrames(self, stage):
-        for PageClass in (SignInPage, PlaceHolderPage, SettingsPage, HomePage):
+        for PageClass in (Courses, SignUpPage, SignInPage, PlaceHolderPage, SettingsPage, HomePage):
             # print(PageClass.__name__)
             # for each page create a new class and new frame
             page_name = PageClass.__name__ # NOTE: __name__ returns the name of the class {>>>("name")<<< : "value"}
             frame = PageClass(parent=stage, controller=self)
             self.frames[page_name] = frame
             
-            frame.grid(row=0, column=0, sticky="nsew") 
+            frame.grid(row=0, column=0, sticky="nsew")
 
     # switch to page "page_name"
     def show_frame(self, page_name):
@@ -89,7 +94,7 @@ class MAIN(tk.Tk):
     
     def refresh(self):
         for frame in self.frames.values():
-            frame.destroy()
+            frame.destroy()  # Destroy the existing frame
         self.frames = {}
         self.buildAllFrames(self.stage)
         self.show_frame(self.currentPage)

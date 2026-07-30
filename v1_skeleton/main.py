@@ -206,7 +206,7 @@ class SettingsPage(tk.Frame):
         ).grid(sticky="", column=0, row=0, columnspan=1, rowspan=1)
         
         functionButton(settingsFrame, "change bg1 col", command=lambda: controller.setattribute('backgroundColor1', pickColor()), column=0, row=1)
-        frame(settingsFrame, bg=controller.backgroundColor1, column=0, row=2, sticky="nsew", bd=1, highLightColor="black", highLightWidth=1)
+        frame(settingsFrame, bg=controller.backgroundColor1, column=0, row=2, sticky="nsew", highLightColor="black", highLightWidth=1)
         
 
 main = MAIN(W, H)
