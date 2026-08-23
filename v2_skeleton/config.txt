@@ -1,5 +1,0 @@
-backgroundColor1=#bdbdbd
-backgroundColor2=#afafaf
-headerColor1=#a0a0a0
-buttonColor1=#ffffff
-textColor1=#000000

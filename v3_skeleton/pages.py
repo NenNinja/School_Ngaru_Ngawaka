@@ -9,9 +9,9 @@ dbDIR = scriptDIR/"db"
 def header(stage, controller):
     headerFrame = frame(stage, controller.headerColor1, column=0, row=0, columnspan=3, sticky="nsew", columnNum=10, showGrid=controller.showGrids)
     
-    linkButton(headerFrame, "CODELOG", controller=controller, page="HomePage", column=3, columnspan=4, row=0, sticky="ew", bg=controller.headerColor1, fg=controller.textColor1, padx=10, pady=10, fsize=60, fstyle="Arial", extra="bold", relief="flat", bd=0, highlightthickness=0)
+    linkButton(headerFrame, "CODELOG", controller=controller, page="HomePage", column=3, columnspan=4, row=0, sticky="", bg=controller.headerColor1, fg=controller.textColor1, fsize=60, fstyle="Arial", extra="bold", relief="flat", bd=0, highlightthickness=0)
     if controller.loggedIn:
-        drawText(headerFrame, f"Welcome, {controller.username}!", bg=controller.headerColor1, fg=controller.textColor1, column=0, row=0, sticky="nsew", fsize=20, columnspan=3, padx=10)
+        drawText(headerFrame, f"Welcome, {controller.username}!", bg=controller.headerColor1, fg=controller.textColor1, column=0, row=0, sticky="", fsize=20, columnspan=3)
     else:
         linkButton(headerFrame, "Sign In", controller=controller, page="SignInPage", column=0, row=0, sticky="ew", bg=controller.buttonColor1, fg=controller.textColor1, padx=50, columnspan=2)
 

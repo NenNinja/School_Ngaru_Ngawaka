@@ -1,0 +1,2 @@
+this form of NENlib testing doesnt currently work
+(i shifted from using mysql to sqlite)

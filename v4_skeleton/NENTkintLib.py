@@ -1,66 +1,52 @@
-from logging import root
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 from tkinter import colorchooser as colPicker
 from pathlib import Path
 
-# mouse class (currently only tracks position) NOTE: from old program for now ignore
-class Mouse:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-    
-    def update(self, stage):
-        self.x = stage.winfo_pointerx() - stage.winfo_rootx()
-        self.y = stage.winfo_pointery() - stage.winfo_rooty()
-mouse = Mouse()
-
-# NOTE: Lazy man code
-# commonly used functions and variables are stored here to avoid making main.py messy
-
-def frame(stage=None, bg="#ffffff", column=0, row=0, columnspan=1, rowspan=1, sticky="", columnNum=0, rowNum=0, showGrid=False, highLightColor="black", highLightWidth=0):
+def frame(stage=None, bg="#ffffff", column=0, row=0, columnspan=1, rowspan=1, sticky="", columnNum=0, rowNum=0, showGrid=False, highLightColor="black", highLightWidth=0, padx=0, pady=0, uniform="group1", propagate=False):
     frame1 = tk.Frame(
-        stage, 
+        stage,
         bg=bg, 
         highlightbackground=highLightColor, 
-        highlightthickness=highLightWidth 
+        highlightthickness=highLightWidth,
         )
     frame1.grid(
         column=column, 
         row=row, 
         columnspan=columnspan, 
         rowspan=rowspan, 
-        sticky=sticky
+        sticky=sticky,
+        padx=padx,
+        pady=pady
         )
-    if columnNum != 0: #NOTE: use if here bc if you set columnNum to 0 it will skip the for i in range() since range(0) = just skips
-        for i in range(columnNum): 
-            frame1.columnconfigure(i, weight=1)
-    else:
-        frame1.columnconfigure(0, weight=1)
-    if rowNum != 0:
-        for i in range(rowNum):
-            frame1.rowconfigure(i, weight=1)
-    else:
-        frame1.rowconfigure(0, weight=1)
-    frame1.grid_propagate(False)
     
-    if showGrid == True: # This grid is for debugging purposes, idea credit goes to Jaco (he inspired the idea for the grid)
-        for ix in range(columnNum) if columnNum != 0 else range(1):
-            for iy in range(rowNum) if rowNum != 0 else range(1):
+    # Configure columns
+    cols = columnNum if columnNum > 0 else 1
+    for i in range(cols): 
+        frame1.columnconfigure(i, weight=1, uniform=uniform)
+
+    # Configure rows
+    rows = rowNum if rowNum > 0 else 1
+    for i in range(rows):
+        frame1.rowconfigure(i, weight=1, uniform=uniform)
+
+    frame1.grid_propagate(propagate)
+    
+    if showGrid:
+        for ix in range(cols):
+            for iy in range(rows):
                 frame(
                     stage=frame1,
                     column=ix, row=iy, 
                     sticky="nsew", 
                     bg="#ffffff",
-                    highLightColor="black",   # This sets the border color
-                    highLightWidth=1,        # This sets the border width in pixels
+                    highLightColor="black",
+                    highLightWidth=1,
+                    uniform=f"debug_{uniform}"
                     )
                 
-    return frame1 # return frame so you can use it to place other widgets inside it
-    # NOTE: eg. headerFrame = frame(yadda yadda)
-    # NOTE: con. drawText(stage=headerFrame, yadda yadda) instead of drawText(stage=root, yadda yadda) (changed root to self remember >:[ )
-
+    return frame1
 
 def drawText(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=14, extra="normal", padx=0, pady=0, sticky="", column=0, row=0, columnspan=1, rowspan=1):
     label = tk.Label(
@@ -68,12 +54,13 @@ def drawText(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=
         text=text, 
         bg=bg, 
         fg=fg, 
-        font=(fstyle, fsize, extra), 
-        padx=padx, pady=pady
-        ).grid(
+        font=(fstyle, fsize, extra)
+        )
+    label.grid(
             sticky=sticky, 
             column=column, row=row, 
-            columnspan=columnspan, rowspan=rowspan
+            columnspan=columnspan, rowspan=rowspan, 
+        padx=padx, pady=pady
             )
     return label # return label so you can use it to change the text later (eg. label.config(text="new text")) (for dynamic text like score, timer, etc.)
 
@@ -83,32 +70,40 @@ def functionButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", 
         text=text, 
         bg=bg, 
         fg=fg, 
-        font=(fstyle, fsize, extra), 
-        padx=padx, pady=pady, 
+        font=(fstyle, fsize, extra),  
         command=command
-        ).grid(
+        )
+    button.grid(
             sticky=sticky, 
             column=column, row=row, 
+            padx=padx, pady=pady,
             columnspan=columnspan, rowspan=rowspan
             )
     return button
 
-def linkButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=14, extra="normal", padx=0, pady=0, sticky="", controller=None, page=None, column=0, row=0, columnspan=1, rowspan=1):
+def linkButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=14, extra="normal", padx=0, pady=0, sticky="", controller=None, page=None, column=0, row=0, columnspan=1, rowspan=1, activebackground=None, borderwidth=1, relief="raised", bd=1, highlightthickness=0):
     button = tk.Button(
         stage, 
         text=text, 
         bg=bg, 
         fg=fg, 
         font=(fstyle, fsize, extra), 
-        padx=padx, pady=pady, 
-        command=lambda: controller.show_frame(page)
-        ).grid(
+        command=lambda: controller.show_frame(page),
+        activebackground=activebackground,
+        borderwidth=borderwidth,
+        relief=relief,
+        bd=bd,
+        highlightthickness=highlightthickness
+        )
+    button.grid(
             sticky=sticky, 
             column=column, 
             row=row, 
             columnspan=columnspan, 
-            rowspan=rowspan
+            rowspan=rowspan,
+            padx=padx, pady=pady, 
             )
+    button.grid_propagate(False)
     return button
 
 def drawEntry(stage=None, bg="white", fg="black", fstyle="Arial", fsize=14, extra="normal", padx=0, pady=0, sticky="", column=0, row=0, columnspan=1, rowspan=1):
@@ -117,7 +112,8 @@ def drawEntry(stage=None, bg="white", fg="black", fstyle="Arial", fsize=14, extr
         bg=bg, 
         fg=fg, 
         font=(fstyle, fsize, extra)
-        ).grid(
+        )
+    entry.grid(
             sticky=sticky, 
             column=column, 
             row=row, 
@@ -134,7 +130,8 @@ def radioButton(stage=None, text="", variable=None, value=None, bg="white", fg="
         text=text, 
         variable=variable, 
         value=value
-        ).grid(
+        )
+    radio.grid(
             sticky=sticky, 
             column=column, 
             row=row, 
@@ -146,7 +143,7 @@ def radioButton(stage=None, text="", variable=None, value=None, bg="white", fg="
 
 def image(stage=None, fileDIR=None, size=[100,100], sticky="", column=0, row=0, columnspan=1, rowspan=1):
         try:
-            resizedImage = Image.open(fileDIR).resize((size[0], size[1]), Image.Resampling.LANCZOS) # NOTE: .Resampling.LANCZOS allows resizing/changing pixel ratio
+            resizedImage = Image.open(fileDIR).resize((size[0], size[1]), Image.Resampling.LANCZOS) # .Resampling.LANCZOS allows resizing/changing pixel ratio
             tkImage = ImageTk.PhotoImage(resizedImage)
             imageLabel = tk.Label(stage, image=tkImage).grid(sticky=sticky, column=column, row=row, columnspan=columnspan, rowspan=rowspan)
             imageLabel.image = tkImage
@@ -156,7 +153,7 @@ def image(stage=None, fileDIR=None, size=[100,100], sticky="", column=0, row=0, 
 
 def imageCommandButton(stage=None, fileDIR=None, size=[100,100], sticky="", command=None, column=0, row=0, columnspan=1, rowspan=1):
         try:
-            resizedImage = Image.open(fileDIR).resize((size[0], size[1]), Image.Resampling.LANCZOS) # NOTE: .Resampling.LANCZOS allows resizing/changing pixel ratio
+            resizedImage = Image.open(fileDIR).resize((size[0], size[1]), Image.Resampling.LANCZOS)
             tkImage = ImageTk.PhotoImage(resizedImage)
             button = tk.Button(stage, image=tkImage, command=command, borderwidth=0)
             button.image = tkImage
@@ -167,7 +164,7 @@ def imageCommandButton(stage=None, fileDIR=None, size=[100,100], sticky="", comm
 
 def imageLinkButton(stage=None, fileDIR=None, size=[100,100], sticky="", column=0, row=0, columnspan=1, rowspan=1, controller=None, page=None, bg="white"):
         try:
-            resizedImage = Image.open(fileDIR).resize((size[0], size[1]), Image.Resampling.LANCZOS) # NOTE: .Resampling.LANCZOS allows resizing/changing pixel ratio
+            resizedImage = Image.open(fileDIR).resize((size[0], size[1]), Image.Resampling.LANCZOS)
             tkImage = ImageTk.PhotoImage(resizedImage)
             button = tk.Button(stage, image=tkImage, command=lambda: controller.show_frame(page), borderwidth=0, bg=bg, activebackground=bg, relief="flat", bd=0, highlightthickness=0)
             button.image = tkImage

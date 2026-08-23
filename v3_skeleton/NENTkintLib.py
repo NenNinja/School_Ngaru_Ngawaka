@@ -19,30 +19,32 @@ mouse = Mouse()
 # NOTE: Lazy man code
 # commonly used functions and variables are stored here to avoid making main.py messy
 
-def frame(stage=None, bg="#ffffff", column=0, row=0, columnspan=1, rowspan=1, sticky="", columnNum=0, rowNum=0, showGrid=False, highLightColor="black", highLightWidth=0):
+def frame(stage=None, bg="#ffffff", column=0, row=0, columnspan=1, rowspan=1, sticky="", columnNum=0, rowNum=0, showGrid=False, highLightColor="black", highLightWidth=0, padx=0, pady=0):
     frame1 = tk.Frame(
-        stage, 
+        stage,
         bg=bg, 
         highlightbackground=highLightColor, 
-        highlightthickness=highLightWidth 
+        highlightthickness=highLightWidth,
         )
     frame1.grid(
         column=column, 
         row=row, 
         columnspan=columnspan, 
         rowspan=rowspan, 
-        sticky=sticky
+        sticky=sticky,
+        padx=padx,
+        pady=pady
         )
     if columnNum != 0: #NOTE: use if here bc if you set columnNum to 0 it will skip the for i in range() since range(0) = just skips
         for i in range(columnNum): 
-            frame1.columnconfigure(i, weight=1)
+            frame1.columnconfigure(i, weight=1, uniform="group1")
     else:
-        frame1.columnconfigure(0, weight=1)
+        frame1.columnconfigure(0, weight=1, uniform="group1")
     if rowNum != 0:
         for i in range(rowNum):
-            frame1.rowconfigure(i, weight=1)
+            frame1.rowconfigure(i, weight=1, uniform="group1")
     else:
-        frame1.rowconfigure(0, weight=1)
+        frame1.rowconfigure(0, weight=1, uniform="group1")
     frame1.grid_propagate(False)
     
     if showGrid == True: # This grid is for debugging purposes, idea credit goes to Jaco (he inspired the idea for the grid)
@@ -68,12 +70,13 @@ def drawText(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=
         text=text, 
         bg=bg, 
         fg=fg, 
-        font=(fstyle, fsize, extra), 
-        padx=padx, pady=pady
-        ).grid(
+        font=(fstyle, fsize, extra)
+        )
+    label.grid(
             sticky=sticky, 
             column=column, row=row, 
-            columnspan=columnspan, rowspan=rowspan
+            columnspan=columnspan, rowspan=rowspan, 
+        padx=padx, pady=pady
             )
     return label # return label so you can use it to change the text later (eg. label.config(text="new text")) (for dynamic text like score, timer, etc.)
 
@@ -83,32 +86,40 @@ def functionButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", 
         text=text, 
         bg=bg, 
         fg=fg, 
-        font=(fstyle, fsize, extra), 
-        padx=padx, pady=pady, 
+        font=(fstyle, fsize, extra),  
         command=command
-        ).grid(
+        )
+    button.grid(
             sticky=sticky, 
             column=column, row=row, 
+            padx=padx, pady=pady,
             columnspan=columnspan, rowspan=rowspan
             )
     return button
 
-def linkButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=14, extra="normal", padx=0, pady=0, sticky="", controller=None, page=None, column=0, row=0, columnspan=1, rowspan=1):
+def linkButton(stage=None, text="", bg="white", fg="black", fstyle="Arial", fsize=14, extra="normal", padx=0, pady=0, sticky="", controller=None, page=None, column=0, row=0, columnspan=1, rowspan=1, activebackground=None, borderwidth=1, relief="raised", bd=1, highlightthickness=0):
     button = tk.Button(
         stage, 
         text=text, 
         bg=bg, 
         fg=fg, 
         font=(fstyle, fsize, extra), 
-        padx=padx, pady=pady, 
-        command=lambda: controller.show_frame(page)
-        ).grid(
+        command=lambda: controller.show_frame(page),
+        activebackground=activebackground,
+        borderwidth=borderwidth,
+        relief=relief,
+        bd=bd,
+        highlightthickness=highlightthickness
+        )
+    button.grid(
             sticky=sticky, 
             column=column, 
             row=row, 
             columnspan=columnspan, 
-            rowspan=rowspan
+            rowspan=rowspan,
+            padx=padx, pady=pady, 
             )
+    button.grid_propagate(False)
     return button
 
 def drawEntry(stage=None, bg="white", fg="black", fstyle="Arial", fsize=14, extra="normal", padx=0, pady=0, sticky="", column=0, row=0, columnspan=1, rowspan=1):
@@ -117,7 +128,8 @@ def drawEntry(stage=None, bg="white", fg="black", fstyle="Arial", fsize=14, extr
         bg=bg, 
         fg=fg, 
         font=(fstyle, fsize, extra)
-        ).grid(
+        )
+    entry.grid(
             sticky=sticky, 
             column=column, 
             row=row, 
@@ -134,7 +146,8 @@ def radioButton(stage=None, text="", variable=None, value=None, bg="white", fg="
         text=text, 
         variable=variable, 
         value=value
-        ).grid(
+        )
+    radio.grid(
             sticky=sticky, 
             column=column, 
             row=row, 

@@ -2,31 +2,31 @@ import hashlib
 import hmac
 import secrets
 import sqlite3
-import os
 
 HASH_ITERATIONS = 200_000
 
-def get_connection(dbPath):
+# Mostly reformatted and modified code from Ms Bharani's Ranui_app_v2
+
+
+def get_connection(db_path):
+    """Establish a connection to the SQLite database."""
     global conn, cursor
-    conn = sqlite3.connect(dbPath)
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
-def setup_db():
-    cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id            INTEGER PRIMARY KEY AUTOINCREMENT,
-                username      TEXT    NOT NULL UNIQUE,
-                salt          TEXT    NOT NULL,
-                password_hash TEXT    NOT NULL
-            )
-        """)
-    cursor.execute("PRAGMA table_info(users)")
-    existing_cols = {row[1] for row in cursor.fetchall()}
 
-    if "pin_salt" not in existing_cols:
-        cursor.execute("ALTER TABLE users ADD COLUMN pin_salt TEXT")
-    if "pin_hash" not in existing_cols:
-        cursor.execute("ALTER TABLE users ADD COLUMN pin_hash TEXT")
+def setup_db():
+    """Create the necessary tables in the database if they don't exist."""
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id            INTEGER PRIMARY KEY AUTOINCREMENT,
+            username      TEXT    NOT NULL UNIQUE,
+            salt          TEXT    NOT NULL,
+            password_hash TEXT    NOT NULL,
+            colors        TEXT
+        )
+    """)
+
 
 def _hash_secret(secret: str, salt: bytes) -> str:
     digest = hashlib.pbkdf2_hmac(
@@ -37,10 +37,13 @@ def _hash_secret(secret: str, salt: bytes) -> str:
     )
     return digest.hex()
 
+
 def _new_salt() -> bytes:
     return secrets.token_bytes(16)
 
+
 def register_user(username: str, password: str) -> bool:
+    """Register a new user with a username and password."""
     salt = _new_salt()
     password_hash = _hash_secret(password, salt)
 
@@ -55,6 +58,7 @@ def register_user(username: str, password: str) -> bool:
     except sqlite3.IntegrityError:
         # UNIQUE constraint on username failed — that username exists already
         return False
+
 
 def verify_login(username: str, password: str) -> dict | None:
     """
@@ -81,11 +85,12 @@ def verify_login(username: str, password: str) -> dict | None:
         return {"username": stored_username}
     return None
 
+
 def change_password(username: str, new_password: str) -> bool:
     """Update an existing user's password. Returns True if the user existed."""
     salt = _new_salt()
     password_hash = _hash_secret(new_password, salt)
-    
+
     cur = conn.execute(
         "UPDATE users SET salt=?, password_hash=? WHERE username=?",
         (salt.hex(), password_hash, username),
@@ -93,6 +98,35 @@ def change_password(username: str, new_password: str) -> bool:
     conn.commit()
     return cur.rowcount > 0
 
-def close_connection():
+
+def save_colors(username: str, colors: list):
+    """Update an existing user's colors. Returns True if the user existed."""
+    colors_str = ",".join(colors)
+    conn.execute(
+        "UPDATE users SET colors=? WHERE username=?",
+        (colors_str, username),
+    )
     conn.commit()
-    conn.close()
+
+
+def load_colors(username: str):
+    """Load an existing user's colors. Returns colors if the user existed."""
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT colors FROM users WHERE username=?",
+        (username,),
+    )
+    row = cur.fetchone()
+
+    if row is None:
+        return None
+
+    return row[0].split(",")
+
+
+def close_connection():
+    """Close the database connection."""
+    if conn:
+        conn.commit()
+        conn.close()
+        

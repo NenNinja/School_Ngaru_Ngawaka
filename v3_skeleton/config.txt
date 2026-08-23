@@ -1,0 +1,5 @@
+backgroundColor1=#e2decf
+backgroundColor2=#e2decf
+headerColor1=#57b7b7
+buttonColor1=#9ed6d6
+textColor1=#112844
